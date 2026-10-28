@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Almaz Service — Top-Up Web App</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Modern Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-logo">💎</div>
+                <div class="brand-info">
+                    <span class="brand-name">ALMAZ <span class="highlight">SERVICE</span></span>
+                    <span class="brand-desc">Tezkor & Rasmiy Top-Up</span>
+                </div>
+            </div>
+            <div class="user-pill" id="userPill">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-meta">
+                    <span class="user-name" id="userName">Foydalanuvchi</span>
+                    <span class="user-badge" id="userId">Telegram</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Category Selector (Free Fire & PUBG) -->
+        <div class="game-switch">
+            <button class="switch-btn active" data-game="freefire" id="tabBtnFF">
+                <span class="switch-icon">🔥</span>
+                <span class="switch-text">Free Fire</span>
+            </button>
+            <button class="switch-btn" data-game="pubg" id="tabBtnPubg">
+                <span class="switch-icon">🪙</span>
+                <span class="switch-text">PUBG Mobile</span>
+            </button>
+        </div>
+
+        <!-- Player ID Input Section -->
+        <section class="card id-section">
+            <div class="section-header">
+                <label for="playerIdInput" class="section-title">
+                    <span class="title-icon">🆔</span>
+                    <span>O'yinchi ID (UID) raqami</span>
+                    <span class="required">*</span>
+                </label>
+                <button type="button" class="help-btn" id="idHelpBtn" title="UID ni qanday topish mumkin?">?</button>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" id="playerIdInput" placeholder="Masalan: 1982736450" inputmode="numeric" maxlength="20" autocomplete="off">
+                <button type="button" class="paste-btn" id="pasteIdBtn">Qo'yish</button>
+            </div>
+            <span class="input-hint" id="gameIdHint">Free Fire profilingizdagi UID raqamingizni kiriting</span>
+        </section>
+
+        <!-- Packages Section -->
+        <section class="packages-section">
+            <div class="packages-header">
+                <h3 class="section-title" id="catalogTitle">🔥 Free Fire Paketlari</h3>
+                <span class="catalog-badge" id="catalogBadge">9 ta tarif</span>
+            </div>
+            <div class="packages-grid" id="packagesGrid">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Payment Info Card -->
+        <section class="card payment-card">
+            <div class="card-head">
+                <span class="card-head-title">💳 To'lov Ma'lumotlari</span>
+                <span class="card-chip">UZCARD / HUMO</span>
+            </div>
+            <div class="card-body">
+                <div class="card-number-row">
+                    <span class="card-digits" id="cardNumberText">9860 6067 4902 3424</span>
+                    <button type="button" class="copy-btn" id="copyCardBtn">
+                        <span class="copy-icon">📋</span> Nusxa
+                    </button>
+                </div>
+                <div class="card-details-row">
+                    <div class="detail-item">
+                        <span class="detail-label">Karta egasi</span>
+                        <span class="detail-val">R. A.</span>
+                    </div>
+                    <div class="detail-item text-right">
+                        <span class="detail-label">Holati</span>
+                        <span class="detail-val text-green">Faol 24/7</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Support Bar -->
+        <section class="support-bar">
+            <div class="support-left">
+                <span class="support-icon">💬</span>
+                <div>
+                    <div class="support-title">Yordam kerakmi?</div>
+                    <div class="support-sub">Admin: @rizayevv_a (24/7)</div>
+                </div>
+            </div>
+            <a href="https://t.me/rizayevv_a" target="_blank" class="support-btn">Adminga yozish</a>
+        </section>
+
+        <!-- Spacer for Bottom Checkout Bar -->
+        <div class="bottom-spacer"></div>
+
+        <!-- Sticky Bottom Checkout Bar -->
+        <div class="checkout-bar" id="checkoutBar">
+            <div class="checkout-info">
+                <span class="checkout-label" id="checkoutLabel">Paketni tanlang</span>
+                <span class="checkout-price" id="checkoutPrice">0 so'm</span>
+            </div>
+            <button type="button" class="checkout-btn" id="checkoutBtn" disabled>
+                <span>Xarid qilish</span>
+                <span class="btn-arrow">→</span>
+            </button>
+        </div>
+
+        <!-- Help Modal -->
+        <div class="modal-overlay hidden" id="helpModal">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h4>🆔 ID raqamni qayerdan topish mumkin?</h4>
+                    <button type="button" class="modal-close" id="closeHelpModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p><b>Free Fire:</b> O'yinga kiring → Chap tepa burchakdagi profilingizni bosing → Ismingiz tagidagi <b>UID (raqamlar)</b>ni nusxalab oling.</p>
+                    <p><b>PUBG Mobile:</b> O'yinga kiring → Profil belgisini bosing → Avataringiz tagidagi <b>Character ID</b> raqamini nusxalab oling.</p>
+                </div>
+                <button type="button" class="modal-btn" id="gotItBtn">Tushundim</button>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast hidden" id="toastMessage">Nusxa olindi!</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
