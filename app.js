@@ -166,30 +166,35 @@ function handleCheckout() {
         return;
     }
 
-    const orderPayload = {
-        action: "web_app_order",
-        game_code: state.activeGame,
-        game_name: catalog[state.activeGame].name,
-        package_id: state.selectedPackage.id,
-        package_name: state.selectedPackage.name,
-        amount: state.selectedPackage.amount,
-        price: state.selectedPackage.price,
-        player_id: playerId
-    };
+    if (tg?.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
 
-    // If inside Telegram WebApp
-    if (tg && tg.sendData) {
-        if (tg.HapticFeedback) {
-            tg.HapticFeedback.notificationOccurred('success');
+    const startParam = `ord_${state.activeGame}_${state.selectedPackage.id}_${encodeURIComponent(playerId)}`;
+    const botUrl = `https://t.me/n1almazserviceuz_bot?start=${startParam}`;
+
+    // 1. Try sendData (supported in KeyboardButton WebApps)
+    try {
+        if (tg && tg.sendData) {
+            tg.sendData(JSON.stringify({
+                action: "web_app_order",
+                game_code: state.activeGame,
+                package_id: state.selectedPackage.id,
+                package_name: state.selectedPackage.name,
+                price: state.selectedPackage.price,
+                player_id: playerId
+            }));
         }
-        tg.sendData(JSON.stringify(orderPayload));
-        tg.close();
+    } catch (e) {
+        console.warn(e);
+    }
+
+    // 2. Open Telegram bot chat directly with order confirmation (Works 100% in MenuButton and all platforms!)
+    if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(botUrl);
+        try { tg.close(); } catch(e) {}
     } else {
-        // Outside Telegram fallback
-        const botUsername = "n1almazserviceuz_bot";
-        const msg = `Buyurtma: ${catalog[state.activeGame].name} - ${state.selectedPackage.name}\nPlayer ID: ${playerId}\nNarxi: ${formatUzs(state.selectedPackage.price)}`;
-        const tgUrl = `https://t.me/${botUsername}?start=order_${state.activeGame}_${state.selectedPackage.id}_${encodeURIComponent(playerId)}`;
-        window.location.href = tgUrl;
+        window.location.href = botUrl;
     }
 }
 
